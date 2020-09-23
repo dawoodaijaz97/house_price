@@ -86,7 +86,8 @@ def forward_feature_selection_xgb(x_data, y_data, n_select):
     return x_data
 
 
-def tree_derived_feature_importance(x_data, y_data, select_n):
+def tree_derived_feature_importance(x_data, y_data,select_n):
+    select_n = int(select_n)
     print(f"number of cols before tree derived feature importance {x_data.columns.shape[0]}")
     select_ = RFE(RandomForestRegressor(n_estimators=100), n_features_to_select=select_n, verbose=2)
     select_.fit(x_data, y_data)

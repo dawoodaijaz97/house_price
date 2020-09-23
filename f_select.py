@@ -599,6 +599,7 @@ def pre_process(x_data, y_data,m_type,n1,n2):
     x_data = correlated_filter(x_data, correlation_threshold=0.8)
     print(x_data.shape)
     print("**********************************")
+
     print("31")
     print("**********************************")
 
@@ -618,8 +619,7 @@ def pre_process(x_data, y_data,m_type,n1,n2):
     print(x_data.shape)
     print("**********************************")
 
-    print("**********************************")
-
+    print("Feature Selection Done")
     print(f"Columns to select {x_data.columns}")
     print("**********************************")
 
