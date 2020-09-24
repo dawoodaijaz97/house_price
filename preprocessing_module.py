@@ -24,6 +24,16 @@ cols_to_select = ['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea', 'LandConto
                   'OpenPorchSF', 'ScreenPorch', 'Fence', 'YrSold', 'SaleType',
                   'SaleCondition']
 
+cols_to_select_rf = ['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea', 'LandContour',
+                     'Neighborhood', 'HouseStyle', 'OverallQual', 'OverallCond', 'YearBuilt',
+                     'YearRemodAdd', 'RoofStyle', 'MasVnrType', 'ExterQual', 'ExterCond',
+                     'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinSF1', 'BsmtFinType2',
+                     'BsmtFinSF2', 'HeatingQC', 'CentralAir', '1stFlrSF', '2ndFlrSF',
+                     'BsmtFullBath', 'FullBath', 'HalfBath', 'KitchenQual', 'TotRmsAbvGrd',
+                     'FireplaceQu', 'GarageFinish', 'GarageCond', 'PavedDrive',
+                     'EnclosedPorch', 'ScreenPorch', 'Fence', 'YrSold', 'SaleType',
+                     'SaleCondition'],
+
 discretize = ["GarageType"]
 
 
@@ -39,6 +49,7 @@ def fill_missing(x_data, strategy):
 
 
 def pre_process(x_data, y_data, val_ratio):
+    print(cols_to_select.__len__())
     cat_variables = x_data.select_dtypes(include="object").columns
 
     print("1")
@@ -626,9 +637,9 @@ def pre_process(x_data, y_data, val_ratio):
     print("30")
     print("**********************************")
 
-    x_test = x_data[1460:,:]
+    x_test = x_data[1460:, :]
 
-    x_data = x_data[:1460,:]
+    x_data = x_data[:1460, :]
     y_data = y_data[:1460]
 
     print(x_data.shape)
@@ -644,4 +655,4 @@ def pre_process(x_data, y_data, val_ratio):
     print(f"Val Ratio {x_val.shape[0]}")
     print("**********************************")
     print("out of pre processing")
-    return x_train, x_val, y_train, y_val,x_test
+    return x_train, x_val, y_train, y_val, x_test

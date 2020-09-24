@@ -76,7 +76,8 @@ def forward_feature_selection_xgb(x_data, y_data, n_select):
                                          subsample=params["subsample"], n_estimators=params["n_estimators"])
 
     sffs = SFS(xgb_regressor, k_features=n_select,
-               forward=True, floating=False, verbose=2, scoring="neg_mean_squared_log_error", cv=3)
+               forward=True, floating=False, verbose=2, scoring="neg_root_mean_squared_error", cv=3)
+    print(y_data)
     selected_feat = sffs.fit(x_data, y_data)
     idx = list(selected_feat.k_feature_idx_)
     cols_to_keep = x_data.columns[idx]

@@ -607,6 +607,8 @@ def pre_process(x_data, y_data,m_type,n1,n2):
     if m_type == "rf":
         x_data = forward_feature_selection(x_data, y_data, n1)
     else:
+        print(y_data)
+        print(y_data.describe())
         x_data = forward_feature_selection_xgb(x_data,y_data,n1)
     print(x_data.shape)
     print("**********************************")
