@@ -13,16 +13,6 @@ ordinal_vars = ["Street", "Alley", "LotShape", "Utilities", "LandSlope", "ExterQ
                 "BsmtQual", "BsmtCond", "BsmtExposure", "BsmtFinType1", "BsmtFinType2", "HeatingQC", "CentralAir",
                 "KitchenQual", "FireplaceQu", "GarageFinish", "GarageQual", "GarageCond", "PoolQC", ]
 
-cols_to_select = ['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea', 'LandContour',
-                  'LotConfig', 'LandSlope', 'Neighborhood', 'HouseStyle', 'OverallQual',
-                  'OverallCond', 'YearBuilt', 'YearRemodAdd', 'RoofStyle', 'Exterior2nd',
-                  'MasVnrType', 'ExterQual', 'Foundation', 'BsmtQual', 'BsmtExposure',
-                  'BsmtFinType1', 'BsmtFinSF1', 'BsmtFinType2', 'BsmtUnfSF', 'HeatingQC',
-                  'CentralAir', '1stFlrSF', '2ndFlrSF', 'BsmtFullBath', 'FullBath',
-                  'HalfBath', 'BedroomAbvGr', 'KitchenQual', 'TotRmsAbvGrd',
-                  'FireplaceQu', 'GarageFinish', 'GarageArea', 'PavedDrive', 'WoodDeckSF',
-                  'OpenPorchSF', 'ScreenPorch', 'Fence', 'YrSold', 'SaleType',
-                  'SaleCondition']
 
 cols_to_select_rf = ['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea', 'LandContour',
                      'Neighborhood', 'HouseStyle', 'OverallQual', 'OverallCond', 'YearBuilt',
@@ -32,7 +22,17 @@ cols_to_select_rf = ['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea', 'LandCo
                      'BsmtFullBath', 'FullBath', 'HalfBath', 'KitchenQual', 'TotRmsAbvGrd',
                      'FireplaceQu', 'GarageFinish', 'GarageCond', 'PavedDrive',
                      'EnclosedPorch', 'ScreenPorch', 'Fence', 'YrSold', 'SaleType',
-                     'SaleCondition'],
+                     'SaleCondition']
+
+cols_to_select_xg = ['MSSubClass', 'MSZoning', 'Alley', 'LandContour', 'LotConfig',
+                     'LandSlope', 'Neighborhood', 'Condition1', 'BldgType', 'HouseStyle',
+                     'OverallQual', 'OverallCond', 'YearBuilt', 'RoofMatl', 'MasVnrType',
+                     'ExterCond', 'Foundation', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
+                     'BsmtFinSF1', 'BsmtFinType2', 'BsmtFinSF2', 'CentralAir', '1stFlrSF',
+                     '2ndFlrSF', 'BsmtFullBath', 'BsmtHalfBath', 'BedroomAbvGr',
+                     'KitchenQual', 'TotRmsAbvGrd', 'FireplaceQu', 'GarageYrBlt',
+                     'GarageFinish', 'GarageArea', 'ScreenPorch', 'Fence', 'YrSold',
+                     'SaleType', 'SaleCondition']
 
 discretize = ["GarageType"]
 
@@ -48,8 +48,15 @@ def fill_missing(x_data, strategy):
     return imputer.fit_transform(x_data)
 
 
-def pre_process(x_data, y_data, val_ratio):
-    print(cols_to_select.__len__())
+def pre_process(x_data, y_data, val_ratio,for_model):
+    cols_to_select = []
+    if for_model == "xg":
+        cols_to_select = cols_to_select_xg
+    elif for_model == "rf":
+        cols_to_select  = cols_to_select_rf
+
+    print(cols_to_select)
+    print(f"Cols to Select {cols_to_select.__len__()}")
     cat_variables = x_data.select_dtypes(include="object").columns
 
     print("1")
@@ -69,7 +76,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("3")
     print("**********************************")
-
+    print(x_data.shape)
     print(f"impute categorical variables")
     cat_to_impute = [x for x in x_data.select_dtypes(include="object").columns if x not in not_impute_cat]
     temp = x_data[cat_to_impute]
@@ -79,7 +86,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("4")
     print("**********************************")
-
+    print(x_data.shape)
     print(f"discretize categorical variables")
 
     def discretize_garage_type(value):
@@ -93,7 +100,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("5")
     print("**********************************")
-
+    print(x_data.shape)
     print(f"encode ordinal Street")
 
     def ordinal_encode_street(val):
@@ -108,7 +115,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("6")
     print("**********************************")
-
+    print(x_data.shape)
     print(f"encode ordinal Alley")
 
     def ordinal_encode_alley(val):
@@ -163,7 +170,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("9")
     print("**********************************")
-
+    print(x_data.shape)
     print("encode ordinal LandSlope")
 
     def ordinal_encode_landslope(val):
@@ -204,7 +211,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("11")
     print("**********************************")
-
+    print(x_data.shape)
     print("encode ordinal ExterCond")
 
     def ordinal_encode_extercond(val):
@@ -227,7 +234,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("12")
     print("**********************************")
-
+    print(x_data.shape)
     print("ordinal encode BsmtQual")
 
     def ordinal_encode_bsmtqual(val):
@@ -281,7 +288,7 @@ def pre_process(x_data, y_data, val_ratio):
     print("**********************************")
 
     print("ordinal encode BsmtExposure")
-
+    print(x_data.shape)
     def ordinal_encode_bsmtexposure(val):
 
         if val == "Gd":
@@ -377,7 +384,7 @@ def pre_process(x_data, y_data, val_ratio):
             return 1
 
     x_data["HeatingQC"] = x_data["HeatingQC"].apply(ordinal_encode_heatingqc)
-
+    print(x_data.shape)
     print("**********************************")
 
     print("18")
@@ -406,6 +413,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("19")
     print("**********************************")
+    print(x_data.shape)
     print("ordinal encode FireplaceQu")
 
     def ordinal_encode_fireplacequ(val):
@@ -473,6 +481,7 @@ def pre_process(x_data, y_data, val_ratio):
     print("**********************************")
 
     print("22")
+    print(x_data.shape)
     print("**********************************")
     print("ordinal encode GarageCond")
 
@@ -534,7 +543,7 @@ def pre_process(x_data, y_data, val_ratio):
     print("**********************************")
 
     print("25")
-
+    print(x_data.shape)
     print("**********************************")
     print("label encode Fence")
 
@@ -584,6 +593,7 @@ def pre_process(x_data, y_data, val_ratio):
 
     print("27")
     print("**********************************")
+    print(x_data.shape)
     print("Manual Label Encoding")
     encoder = LabelEncoder()
     cols_to_encode = x_data.select_dtypes(include="object").columns
@@ -592,20 +602,24 @@ def pre_process(x_data, y_data, val_ratio):
         if col == "Fence":
             continue
         x_data[col] = encoder.fit_transform(temp[col])
+    print(x_data.shape)
     print("**********************************")
     print(f"All encoding done! categorical variables  {x_data.select_dtypes('object').shape}")
     print("Start Feature Selection!")
-
+    print(cols_to_select)
+    print(cols_to_select.__len__())
     cols_to_drop = [x for x in x_data.columns if x not in cols_to_select]
     print(f"cols to keep size {cols_to_select.__len__()}")
     print(f"cols to drop size {cols_to_drop.__len__()}")
 
     x_data.drop(labels=cols_to_drop, axis=1, inplace=True)
+    print(x_data.shape)
     print("Feature selection done!")
     print("**********************************")
 
     print("28")
     print("**********************************")
+    print(x_data.shape)
     print("Start one hot encoding ")
     print(f"number of features before one hot encoding {x_data.columns.shape[0]}")
     one_hot = [x for x in cat_variables if x not in ordinal_vars]
@@ -654,5 +668,6 @@ def pre_process(x_data, y_data, val_ratio):
     print(f"Train Size {x_train.shape[0]}")
     print(f"Val Ratio {x_val.shape[0]}")
     print("**********************************")
+    print(f"Pre-processing Done for {for_model} ")
     print("out of pre processing")
     return x_train, x_val, y_train, y_val, x_test

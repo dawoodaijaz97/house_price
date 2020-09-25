@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 from matplotlib import pyplot
 
 
-def get_dataset(eval_ratio):
+def get_dataset(val_ratio,for_model):
     path = "./data/train.csv"
     path2 = "./data/test.csv"
 
@@ -23,7 +23,7 @@ def get_dataset(eval_ratio):
     x_data = raw_data.iloc[:, 1:-1]
     y_data = raw_data.iloc[:, -1]
 
-    x_train, x_val, y_train, y_val,x_test = pre_process(x_data, y_data, eval_ratio, "")
+    x_train, x_val, y_train, y_val,x_test = pre_process(x_data, y_data, val_ratio,for_model)
     return x_train, x_val, y_train, y_val,x_test
 
 
@@ -79,7 +79,9 @@ def create_ensemble_data(y_train_pred1, y_train_pred2, y_val_pred1, y_val_pred2)
 
 
 def main():
-    x_train, x_val, y_train, y_val,x_test = get_dataset(0.1)
+    x_train_xg, x_val_xg, y_train, y_val,x_test_xg = get_dataset(0.1,"xg")
+
+    x_train_rf, x_val_rf, y_train, y_val,x_test_rf = get_dataset(0.1,"rf")
 
     best_params_xg_model = {'subsample': 0.6, 'objective': 'reg:squarederror',
                             'n_estimators': 666, 'min_child_weight': 0.8,
@@ -95,11 +97,11 @@ def main():
 
     rf_regressor = get_best_rf_model(best_params_rf)
 
-    xgb_regressor, y_train_pred1 = train_model(x_train, y_train, xgb_regressor)
-    rf_regressor, y_train_pred2 = train_model(x_train, y_train, rf_regressor)
+    xgb_regressor, y_train_pred1 = train_model(x_train_xg, y_train, xgb_regressor)
+    rf_regressor, y_train_pred2 = train_model(x_train_rf, y_train, rf_regressor)
 
-    y_val_pred1 = eval_model(x_val, y_val, xgb_regressor)
-    y_val_pred2 = eval_model(x_val, y_val, rf_regressor)
+    y_val_pred1 = eval_model(x_val_xg, y_val, xgb_regressor)
+    y_val_pred2 = eval_model(x_val_rf, y_val, rf_regressor)
 
     x_train, x_val = create_ensemble_data(y_train_pred1, y_train_pred2, y_val_pred1, y_val_pred2)
 
@@ -108,10 +110,8 @@ def main():
 
     eval_model(x_val, y_val, linear_model)
 
-    print(x_test.shape)
-
-    y_test_pred1 = get_preds(x_test,xgb_regressor)
-    y_test_pred2 = get_preds(x_test,rf_regressor)
+    y_test_pred1 = get_preds(x_test_xg,xgb_regressor)
+    y_test_pred2 = get_preds(x_test_rf,rf_regressor)
 
     y_test_pred1 = np.reshape(y_test_pred1, (-1, 1))
     y_test_pred2 = np.reshape(y_test_pred2, (-1, 1))
@@ -125,7 +125,6 @@ def main():
     y_test.to_csv("./submission.csv",sep=",")
 
     print(y_test)
-
 
 
 if __name__ == "__main__":

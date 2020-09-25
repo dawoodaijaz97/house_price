@@ -51,7 +51,7 @@ def forward_feature_selection(x_data, y_data, n_select):
     n_select = int(n_select)
     print(f"num cols before forward feature selection {x_data.shape[1]}")
 
-    sffs = SFS(RandomForestRegressor(n_estimators=100, n_jobs=4), k_features=n_select,
+    sffs = SFS(RandomForestRegressor(n_estimators=100, n_jobs=4), k_features="best",
                forward=True, floating=False, verbose=2, scoring="neg_mean_squared_log_error", cv=3)
     selected_feat = sffs.fit(x_data, y_data)
     idx = list(selected_feat.k_feature_idx_)
@@ -67,7 +67,7 @@ def forward_feature_selection_xgb(x_data, y_data, n_select):
     print(f"num cols before forward feature selection (xgb) {x_data.shape[1]}")
 
     params = {'subsample': 0.6, 'objective': 'reg:squarederror',
-              'n_estimators': 666, 'min_child_weight': 0.8,
+              'n_estimators': 100, 'min_child_weight': 0.8,
               'max_depth': 10, 'learning_rate': 0.1, 'gamma': 1,
               'alpha': 10}
     xgb_regressor = xgboost.XGBRegressor(objective=params["objective"], min_child_weight=params["min_child_weight"],
@@ -75,7 +75,7 @@ def forward_feature_selection_xgb(x_data, y_data, n_select):
                                          max_depth=params["max_depth"], alpha=params["alpha"], gamma=params["gamma"],
                                          subsample=params["subsample"], n_estimators=params["n_estimators"])
 
-    sffs = SFS(xgb_regressor, k_features=n_select,
+    sffs = SFS(xgb_regressor, k_features="best",
                forward=True, floating=False, verbose=2, scoring="neg_root_mean_squared_error", cv=3)
     print(y_data)
     selected_feat = sffs.fit(x_data, y_data)
